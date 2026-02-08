@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Contact Card</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            margin-bottom: 20px;
+        }
+
+        .profile-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .profile-image {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 50px;
+            color: white;
+            border: 5px solid #f0f0f0;
+        }
+
+        .shop-name {
+            font-size: 28px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .tagline {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .actions {
+            display: grid;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            padding: 18px 20px;
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-color: #667eea;
+        }
+
+        .action-btn .icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            margin-right: 15px;
+        }
+
+        .action-btn .content {
+            flex: 1;
+        }
+
+        .action-btn .title {
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 3px;
+        }
+
+        .action-btn .subtitle {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .phone-btn .icon { background: #25D366; color: white; }
+        .location-btn .icon { background: #EA4335; color: white; }
+        .whatsapp-btn .icon { background: #25D366; color: white; }
+        .instagram-btn .icon { background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); color: white; }
+
+        .setup-mode {
+            background: #fff3cd;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 2px solid #ffc107;
+        }
+
+        .setup-mode h3 {
+            color: #856404;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn-generate {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+            margin-top: 10px;
+        }
+
+        .btn-generate:hover {
+            transform: scale(1.02);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* QR Code Section */
+        .qr-section {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+
+        .qr-section h2 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+
+        .qr-section p {
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        #qrcode {
+            display: inline-block;
+            padding: 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin: 20px 0;
+        }
+
+        .qr-actions {
+            display: grid;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .qr-btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .qr-btn-download {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .qr-btn-download:hover {
+            transform: scale(1.02);
+        }
+
+        .qr-btn-back {
+            background: white;
+            border: 2px solid #667eea;
+            color: #667eea;
+        }
+
+        .qr-btn-back:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .info-box {
+            background: #e7f3ff;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border-left: 4px solid #2196F3;
+            text-align: left;
+        }
+
+        .info-box h4 {
+            color: #1976D2;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+
+        .info-box p {
+            color: #555;
+            font-size: 13px;
+            line-height: 1.6;
+            margin: 5px 0;
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            border-left: 4px solid #ffc107;
+            text-align: left;
+        }
+
+        .warning-box h4 {
+            color: #856404;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+
+        .warning-box p {
+            color: #856404;
+            font-size: 13px;
+            line-height: 1.6;
+            margin: 5px 0;
+        }
+
+        .url-display {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 15px 0;
+            word-break: break-all;
+            font-size: 11px;
+            color: #666;
+            border: 2px dashed #e9ecef;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        .hosting-options {
+            background: #d4edda;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border-left: 4px solid #28a745;
+            text-align: left;
+        }
+
+        .hosting-options h4 {
+            color: #155724;
+            margin-bottom: 12px;
+            font-size: 16px;
+        }
+
+        .hosting-options ul {
+            margin-left: 20px;
+            color: #155724;
+        }
+
+        .hosting-options li {
+            margin: 8px 0;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .hosting-options a {
+            color: #0066cc;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .hosting-options a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Setup Mode -->
+        <div id="setupMode" class="card">
+            <div class="setup-mode">
+                <h3>📝 अपनी जानकारी भरें</h3>
+                <div class="form-group">
+                    <label>दुकान का नाम / Shop Name *</label>
+                    <input type="text" id="shopName" placeholder="मेरी दुकान">
+                </div>
+                <div class="form-group">
+                    <label>मोबाइल नंबर / Mobile Number *</label>
+                    <input type="tel" id="phoneNumber" placeholder="+91 9876543210">
+                </div>
+                <div class="form-group">
+                    <label>दुकान का पता / Shop Location</label>
+                    <input type="text" id="shopLocation" placeholder="123 Main Street, Delhi">
+                </div>
+                <div class="form-group">
+                    <label>WhatsApp Channel Link</label>
+                    <input type="url" id="whatsappChannel" placeholder="https://whatsapp.com/channel/...">
+                </div>
+                <div class="form-group">
+                    <label>Instagram Username</label>
+                    <input type="text" id="instagramId" placeholder="myshop_official">
+                </div>
+                <button class="btn-generate" onclick="generateQRWithData()">📱 Generate QR Code</button>
+            </div>
+
+            <div class="warning-box">
+                <h4>⚠️ महत्वपूर्ण जानकारी</h4>
+                <p>QR code तभी काम करेगा जब आप इस file को online host करेंगे। अभी यह सिर्फ आपके computer पर है।</p>
+            </div>
+
+            <div class="hosting-options">
+                <h4>🌐 Free Hosting Options (Recommended)</h4>
+                <ul>
+                    <li><strong>GitHub Pages:</strong> सबसे अच्छा option - <a href="https://pages.github.com" target="_blank">pages.github.com</a></li>
+                    <li><strong>Netlify:</strong> बहुत आसान - <a href="https://netlify.com" target="_blank">netlify.com</a></li>
+                    <li><strong>Vercel:</strong> तेज़ और मुफ्त - <a href="https://vercel.com" target="_blank">vercel.com</a></li>
+                    <li><strong>InfinityFree:</strong> Traditional hosting - <a href="https://infinityfree.net" target="_blank">infinityfree.net</a></li>
+                </ul>
+                <p style="margin-top: 12px; font-weight: 600;">इनमें से किसी पर भी यह file upload करें, फिर मिलने वाले link से QR code बनाएं। 100% मुफ्त है!</p>
+            </div>
+        </div>
+
+        <!-- Card Display Mode -->
+        <div id="cardMode" class="card hidden">
+            <div class="profile-section">
+                <div class="profile-image">
+                    <span>🏪</span>
+                </div>
+                <h1 class="shop-name" id="displayShopName">My Shop</h1>
+                <p class="tagline">Digital Contact Card</p>
+            </div>
+
+            <div class="actions">
+                <!-- Phone -->
+                <a href="#" class="action-btn phone-btn" onclick="saveContact(event)">
+                    <div class="icon">📞</div>
+                    <div class="content">
+                        <div class="title">Save Contact</div>
+                        <div class="subtitle" id="displayPhone">+91 XXXXXXXXXX</div>
+                    </div>
+                </a>
+
+                <!-- Location -->
+                <a href="#" class="action-btn location-btn" id="locationBtn" target="_blank">
+                    <div class="icon">📍</div>
+                    <div class="content">
+                        <div class="title">Visit Shop</div>
+                        <div class="subtitle" id="displayLocation">Shop Location</div>
+                    </div>
+                </a>
+
+                <!-- WhatsApp Channel -->
+                <a href="#" class="action-btn whatsapp-btn" id="whatsappBtn" target="_blank">
+                    <div class="icon">💬</div>
+                    <div class="content">
+                        <div class="title">WhatsApp Channel</div>
+                        <div class="subtitle">Follow for Updates</div>
+                    </div>
+                </a>
+
+                <!-- Instagram -->
+                <a href="#" class="action-btn instagram-btn" id="instagramBtn" target="_blank">
+                    <div class="icon">📷</div>
+                    <div class="content">
+                        <div class="title">Instagram</div>
+                        <div class="subtitle" id="displayInstagram">@myshop</div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- QR Code Section -->
+        <div id="qrSection" class="qr-section hidden">
+            <h2>📱 आपका QR Code</h2>
+            <p>इस QR code को download करें और अपनी दुकान में लगाएं</p>
+            
+            <div id="qrcode"></div>
+            
+            <div class="url-display" id="urlDisplay"></div>
+
+            <div class="qr-actions">
+                <button class="qr-btn qr-btn-download" onclick="downloadQR()">⬇️ Download QR Code</button>
+                <button class="qr-btn qr-btn-back" onclick="goBack()">⬅️ Back</button>
+            </div>
+
+            <div class="info-box">
+                <h4>📌 अगले Steps:</h4>
+                <p><strong>Step 1:</strong> QR Code download करें</p>
+                <p><strong>Step 2:</strong> इस HTML file को ऊपर बताए गए किसी free hosting पर upload करें</p>
+                <p><strong>Step 3:</strong> Upload के बाद मिलने वाले link से फिर से QR code बनाएं</p>
+                <p><strong>Step 4:</strong> नया QR code print करके दुकान में लगाएं</p>
+            </div>
+
+            <div class="warning-box">
+                <h4>⚠️ ध्यान दें</h4>
+                <p>यह QR code अभी सिर्फ testing के लिए है। इसे दुकान में लगाने से पहले file को online host करना ज़रूरी है!</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let qrCodeInstance = null;
+
+        // Check if URL has parameters (customer visiting card)
+        window.onload = function() {
+            const params = new URLSearchParams(window.location.search);
+            
+            if (params.has('name')) {
+                // Customer view - show card
+                showCardFromURL(params);
+            }
+        };
+
+        function showCardFromURL(params) {
+            const data = {
+                shopName: params.get('name') || 'My Shop',
+                phoneNumber: params.get('phone') || '',
+                shopLocation: params.get('location') || '',
+                whatsappChannel: params.get('whatsapp') || '',
+                instagramId: params.get('instagram') || ''
+            };
+
+            updateCard(data);
+            document.getElementById('setupMode').classList.add('hidden');
+            document.getElementById('cardMode').classList.remove('hidden');
+        }
+
+        function updateCard(data) {
+            document.getElementById('displayShopName').textContent = data.shopName;
+            document.getElementById('displayPhone').textContent = data.phoneNumber;
+            document.getElementById('displayLocation').textContent = data.shopLocation || 'Shop Location';
+            document.getElementById('displayInstagram').textContent = '@' + (data.instagramId || 'myshop');
+
+            if (data.shopLocation) {
+                document.getElementById('locationBtn').href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(data.shopLocation)}`;
+            }
+
+            if (data.whatsappChannel) {
+                document.getElementById('whatsappBtn').href = data.whatsappChannel;
+            }
+
+            if (data.instagramId) {
+                document.getElementById('instagramBtn').href = `https://www.instagram.com/${data.instagramId.replace('@', '')}`;
+            }
+        }
+
+        function saveContact(event) {
+            event.preventDefault();
+            
+            const params = new URLSearchParams(window.location.search);
+            const phoneNumber = params.get('phone');
+            const shopName = params.get('name');
+
+            if (!phoneNumber) {
+                alert('Phone number not found!');
+                return;
+            }
+
+            const vcard = `BEGIN:VCARD
+VERSION:3.0
+FN:${shopName}
+TEL;TYPE=CELL:${phoneNumber}
+END:VCARD`;
+
+            const blob = new Blob([vcard], { type: 'text/vcard' });
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `${shopName.replace(/\s+/g, '_')}.vcf`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+
+            alert('📱 Contact file downloaded! अब इसे खोलकर Save करें।');
+        }
+
+        function generateQRWithData() {
+            const shopName = document.getElementById('shopName').value.trim();
+            const phoneNumber = document.getElementById('phoneNumber').value.trim();
+            const shopLocation = document.getElementById('shopLocation').value.trim();
+            const whatsappChannel = document.getElementById('whatsappChannel').value.trim();
+            const instagramId = document.getElementById('instagramId').value.trim();
+
+            if (!shopName || !phoneNumber) {
+                alert('कृपया दुकान का नाम और मोबाइल नंबर भरें!');
+                return;
+            }
+
+            // Create URL with parameters
+            const baseURL = window.location.href.split('?')[0];
+            const params = new URLSearchParams({
+                name: shopName,
+                phone: phoneNumber,
+                ...(shopLocation && { location: shopLocation }),
+                ...(whatsappChannel && { whatsapp: whatsappChannel }),
+                ...(instagramId && { instagram: instagramId })
+            });
+
+            const fullURL = `${baseURL}?${params.toString()}`;
+
+            // Show QR section
+            document.getElementById('setupMode').classList.add('hidden');
+            document.getElementById('qrSection').classList.remove('hidden');
+
+            // Display URL
+            document.getElementById('urlDisplay').innerHTML = `<strong>QR Code Link:</strong><br>${fullURL}`;
+
+            // Generate QR Code
+            const qrContainer = document.getElementById('qrcode');
+            qrContainer.innerHTML = '';
+
+            qrCodeInstance = new QRCode(qrContainer, {
+                text: fullURL,
+                width: 256,
+                height: 256,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+        }
+
+        function downloadQR() {
+            const canvas = document.querySelector('#qrcode canvas');
+            if (!canvas) {
+                alert('QR Code not generated yet!');
+                return;
+            }
+
+            const shopName = document.getElementById('shopName').value.trim() || 'QRCode';
+            const url = canvas.toDataURL('image/png');
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `${shopName.replace(/\s+/g, '_')}_QRCode.png`;
+            link.click();
+
+            alert('✅ QR Code downloaded!\n\n⚠️ याद रखें: इस file को online host करने के बाद नया QR code बनाएं!');
+        }
+
+        function goBack() {
+            document.getElementById('qrSection').classList.add('hidden');
+            document.getElementById('setupMode').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
